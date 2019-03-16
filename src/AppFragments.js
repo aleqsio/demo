@@ -4,13 +4,13 @@ import { ApolloProvider } from "react-apollo";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
 import { mockClient } from './apollo';
-import './App.css'
+import CatContainer, { CatContainerFragment } from './CatContainer';
 
 const sampleClient = new ApolloClient({
   uri: "http://yourBackendUrl.com/api/graphql"
 });
 
-class App extends Component {
+class AppFragments extends Component {
   render() {
     return (
       <ApolloProvider client={mockClient}>
@@ -18,23 +18,17 @@ class App extends Component {
           query={gql`
             {
               cats {
-                name
-                rating
-                likes
+                ...CatContainerFragment
               }
             }
+            ${CatContainerFragment}
           `}
         >
           {({ loading, error, data }) => {
             if (loading) return <p>Loading...</p>;
             if (error) return <p>Error :(</p>;
-
-            return data.cats.map(({ name, rating, likes }) => (
-              <div key={name} className="catContainer">
-                <h1>{name}</h1>
-                <h2>{rating}/5</h2>
-                <h3>{likes} likes</h3>
-              </div>
+            return data.cats.map((data) => (
+              <CatContainer {...data}/>
             ));
           }}
         </Query>
@@ -43,4 +37,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default AppFragments;
